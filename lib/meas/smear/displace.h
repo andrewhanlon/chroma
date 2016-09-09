@@ -91,7 +91,27 @@ namespace Chroma
 			     const LatticePropagator& p, 
 			     int length, const multi1d<int>& path,
 			     const Subset& sub   ) ;
+
+  // Displacement using the 6-dimensional gauge-links and color vectors
+  LatticeColorVector6 displace(const multi1d<LatticeColorMatrix6>& u, 
+			      const LatticeColorVector6& chi, 
+			      int length, const multi1d<int>& path);
   
+  LatticeColorVector6 displace(const multi1d<LatticeColorMatrix6>& u, 
+			      const LatticeColorVector6& chi, 
+			      int length, const multi1d<int>& path,
+			      const Subset& sub);
+
+  // Displacement using the 8-dimensional gauge-links and color vectors
+  LatticeColorVector8 displace(const multi1d<LatticeColorMatrix8>& u, 
+			      const LatticeColorVector8& chi, 
+			      int length, const multi1d<int>& path);
+  
+  LatticeColorVector8 displace(const multi1d<LatticeColorMatrix8>& u, 
+			      const LatticeColorVector8& chi, 
+			      int length, const multi1d<int>& path,
+			      const Subset& sub);
+
   //! Apply a displacement operator to a lattice field
   /*!
    * \ingroup smear
@@ -145,7 +165,27 @@ namespace Chroma
   LatticePropagator displacement(const multi1d<LatticeColorMatrix>& u, 
 				 const LatticePropagator& chi, 
 				 int length, int dir);
-  
+
+
+  // Displacement using the 6-dimensional gauge-links and color vectors
+  LatticeColorVector6 displace(const multi1d<LatticeColorMatrix6>& u, 
+			      const LatticeColorVector6& chi, 
+			      int length, int dir);
+
+  LatticeColorVector6 displace(const multi1d<LatticeColorMatrix6>& u, 
+			      const LatticeColorVector6& chi, 
+			      int length, int dir,
+			      const Subset& sub);
+
+  // Displacement using the 8-dimensional gauge-links and color vectors
+  LatticeColorVector8 displace(const multi1d<LatticeColorMatrix8>& u, 
+			      const LatticeColorVector8& chi, 
+			      int length, int dir);
+
+  LatticeColorVector8 displace(const multi1d<LatticeColorMatrix8>& u, 
+			      const LatticeColorVector8& chi, 
+			      int length, int dir,
+			      const Subset& sub);
 
   //----------------------------------------------------------------------------------
   //! Apply a right nabla path to a lattice field

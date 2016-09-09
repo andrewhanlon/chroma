@@ -37,9 +37,9 @@ namespace Chroma
    *
    *  \return  displaced field
    */
-  template<typename T>
-  T displace(const multi1d<LatticeColorMatrix>& u, 
-	     const T& psi, 
+  template<typename T1, typename T2>
+  T1 displace(const multi1d<T2>& u, 
+	     const T1& psi, 
 	     int length, int dir,
 	     const Subset& sub)
   {
@@ -49,8 +49,8 @@ namespace Chroma
       QDP_abort(1);
     }
 
-    T tmp;
-    T chi;
+    T1 tmp;
+    T1 chi;
     chi[sub] = psi;
 
     if (length > 0)
@@ -78,7 +78,7 @@ namespace Chroma
 			      const LatticeColorVector& chi, 
 			      int length, int dir)
   {
-    return displace<LatticeColorVector>(u, chi, length, dir, QDP::all);
+    return displace<LatticeColorVector,LatticeColorMatrix>(u, chi, length, dir, QDP::all);
   }
 
 
@@ -86,7 +86,7 @@ namespace Chroma
 			      const LatticeColorVector& chi, 
 			      int length, int dir, const Subset& sub)
   {
-    return displace<LatticeColorVector>(u, chi, length, dir, sub);
+    return displace<LatticeColorVector,LatticeColorMatrix>(u, chi, length, dir, sub);
   }
 
 
@@ -95,7 +95,7 @@ namespace Chroma
 			      const LatticeColorMatrix& chi, 
 			      int length, int dir)
   {
-    return displace<LatticeColorMatrix>(u, chi, length, dir, QDP::all);
+    return displace<LatticeColorMatrix,LatticeColorMatrix>(u, chi, length, dir, QDP::all);
   }
 
 
@@ -103,7 +103,7 @@ namespace Chroma
 			      const LatticeColorMatrix& chi, 
 			      int length, int dir, const Subset& sub)
   {
-    return displace<LatticeColorMatrix>(u, chi, length, dir, sub);
+    return displace<LatticeColorMatrix,LatticeColorMatrix>(u, chi, length, dir, sub);
   }
 
 
@@ -112,7 +112,7 @@ namespace Chroma
 			     const LatticePropagator& chi, 
 			     int length, int dir)
   {
-    return displace<LatticePropagator>(u, chi, length, dir, QDP::all);
+    return displace<LatticePropagator,LatticeColorMatrix>(u, chi, length, dir, QDP::all);
   }
 
 
@@ -121,7 +121,7 @@ namespace Chroma
 			  const LatticeFermion& chi, 
 			  int length, int dir)
   {
-    return displace<LatticeFermion>(u, chi, length, dir, QDP::all);
+    return displace<LatticeFermion,LatticeColorMatrix>(u, chi, length, dir, QDP::all);
   }
 
   // Apply a displacement operator to a lattice field
@@ -129,7 +129,7 @@ namespace Chroma
 				   const LatticeStaggeredFermion& chi, 
 				   int length, int dir)
   {
-    return displace<LatticeStaggeredFermion>(u, chi, length, dir, QDP::all);
+    return displace<LatticeStaggeredFermion,LatticeColorMatrix>(u, chi, length, dir, QDP::all);
   }
 
 
@@ -138,8 +138,44 @@ namespace Chroma
 				      const LatticeStaggeredPropagator& chi, 
 				      int length, int dir)
   {
-    return displace<LatticeStaggeredPropagator>(u, chi, length, dir, QDP::all);
+    return displace<LatticeStaggeredPropagator,LatticeColorMatrix>(u, chi, length, dir, QDP::all);
   }
+
+
+  // Displacement using the 6-dimensional gauge-links and color vectors
+  LatticeColorVector6 displace(const multi1d<LatticeColorMatrix6>& u, 
+			      const LatticeColorVector6& chi, 
+			      int length, int dir)
+  {
+    return displace<LatticeColorVector6,LatticeColorMatrix6>(u, chi, length, dir, QDP::all);
+  }
+
+
+  LatticeColorVector6 displace(const multi1d<LatticeColorMatrix6>& u, 
+			      const LatticeColorVector6& chi, 
+			      int length, int dir, const Subset& sub)
+  {
+    return displace<LatticeColorVector6,LatticeColorMatrix6>(u, chi, length, dir, sub);
+  }
+
+
+  // Displacement using the 8-dimensional gauge-links and color vectors
+  LatticeColorVector8 displace(const multi1d<LatticeColorMatrix8>& u, 
+			      const LatticeColorVector8& chi, 
+			      int length, int dir)
+  {
+    return displace<LatticeColorVector8,LatticeColorMatrix8>(u, chi, length, dir, QDP::all);
+  }
+
+
+  LatticeColorVector8 displace(const multi1d<LatticeColorMatrix8>& u, 
+			      const LatticeColorVector8& chi, 
+			      int length, int dir, const Subset& sub)
+  {
+    return displace<LatticeColorVector8,LatticeColorMatrix8>(u, chi, length, dir, sub);
+  }
+
+
 
 
 
@@ -157,9 +193,9 @@ namespace Chroma
    *
    *  \return  displaced field
    */
-  template<typename T>
-  T displace(const multi1d<LatticeColorMatrix>& u, 
-	     const T& psi, 
+  template<typename T1, typename T2>
+  T1 displace(const multi1d<T2>& u, 
+	     const T1& psi, 
 	     int displacement_length, 
 	     const multi1d<int>& path,
 	     const Subset& sub)
@@ -170,7 +206,7 @@ namespace Chroma
       QDP_abort(1);
     }
 
-    T chi;
+    T1 chi;
     chi[sub] = psi;
 
     for(int i=0; i < path.size(); ++i)
@@ -179,13 +215,13 @@ namespace Chroma
       {
 	int disp_dir = path[i] - 1;
 	int disp_len = displacement_length;
-	chi[sub] = displace<T>(u, chi, disp_len, disp_dir, sub);
+	chi[sub] = displace<T1,T2>(u, chi, disp_len, disp_dir, sub);
       }
       else if (path[i] < 0)
       {
 	int disp_dir = -path[i] - 1;
 	int disp_len = -displacement_length;
-	chi[sub] = displace<T>(u, chi, disp_len, disp_dir, sub);
+	chi[sub] = displace<T1,T2>(u, chi, disp_len, disp_dir, sub);
       }
     }
 
@@ -198,7 +234,7 @@ namespace Chroma
 			      const LatticeColorVector& chi, 
 			      int length, const multi1d<int>& path)
   {
-    return displace<LatticeColorVector>(u, chi, length, path, QDP::all);
+    return displace<LatticeColorVector,LatticeColorMatrix>(u, chi, length, path, QDP::all);
   }
 
   // Apply a displacement path to a lattice field
@@ -207,7 +243,7 @@ namespace Chroma
 			      int length, const multi1d<int>& path,
 			      const Subset& sub)
   {
-    return displace<LatticeColorVector>(u, chi, length, path, sub);
+    return displace<LatticeColorVector,LatticeColorMatrix>(u, chi, length, path, sub);
   }
 
 
@@ -216,7 +252,7 @@ namespace Chroma
 			      const LatticeColorMatrix& chi, 
 			      int length, const multi1d<int>& path)
   {
-    return displace<LatticeColorMatrix>(u, chi, length, path, QDP::all);
+    return displace<LatticeColorMatrix,LatticeColorMatrix>(u, chi, length, path, QDP::all);
   }
 
   // Apply a displacement path to a lattice field
@@ -225,7 +261,7 @@ namespace Chroma
 			      int length, const multi1d<int>& path,
 			      const Subset& sub)
   {
-    return displace<LatticeColorMatrix>(u, chi, length, path, sub);
+    return displace<LatticeColorMatrix,LatticeColorMatrix>(u, chi, length, path, sub);
   }
 
 
@@ -234,7 +270,7 @@ namespace Chroma
 			  const LatticeFermion& chi, 
 			  int length, const multi1d<int>& path)
   {
-    return displace<LatticeFermion>(u, chi, length, path, QDP::all);
+    return displace<LatticeFermion,LatticeColorMatrix>(u, chi, length, path, QDP::all);
   }
 
   // Apply a displacement path to a lattice field
@@ -243,7 +279,7 @@ namespace Chroma
 			  int length, const multi1d<int>& path,
 			  const Subset& sub)
   {
-    return displace<LatticeFermion>(u, chi, length, path, sub);
+    return displace<LatticeFermion,LatticeColorMatrix>(u, chi, length, path, sub);
   }
 
   // Apply a displacement path to a lattice field
@@ -251,7 +287,7 @@ namespace Chroma
 			     const LatticePropagator& p, 
 			     int length, const multi1d<int>& path)
   {
-    return displace<LatticePropagator>(u, p, length, path, QDP::all);
+    return displace<LatticePropagator,LatticeColorMatrix>(u, p, length, path, QDP::all);
   }
 
   // Apply a displacement path to a lattice field
@@ -260,9 +296,43 @@ namespace Chroma
 			     int length, const multi1d<int>& path,
 			     const Subset& sub   )
   {
-    return displace<LatticePropagator>(u, p, length, path, sub);
+    return displace<LatticePropagator,LatticeColorMatrix>(u, p, length, path, sub);
   }
   
+
+  // Displacement using the 6-dimensional gauge-links and color vectors
+  LatticeColorVector6 displace(const multi1d<LatticeColorMatrix6>& u, 
+			      const LatticeColorVector6& chi, 
+			      int length, const multi1d<int>& path)
+  {
+    return displace<LatticeColorVector6,LatticeColorMatrix6>(u, chi, length, path, QDP::all);
+  }
+
+  LatticeColorVector6 displace(const multi1d<LatticeColorMatrix6>& u, 
+			      const LatticeColorVector6& chi, 
+			      int length, const multi1d<int>& path,
+			      const Subset& sub)
+  {
+    return displace<LatticeColorVector6,LatticeColorMatrix6>(u, chi, length, path, sub);
+  }
+
+  // Displacement using the 8-dimensional gauge-links and color vectors
+  LatticeColorVector8 displace(const multi1d<LatticeColorMatrix8>& u, 
+			      const LatticeColorVector8& chi, 
+			      int length, const multi1d<int>& path)
+  {
+    return displace<LatticeColorVector8,LatticeColorMatrix8>(u, chi, length, path, QDP::all);
+  }
+
+  LatticeColorVector8 displace(const multi1d<LatticeColorMatrix8>& u, 
+			      const LatticeColorVector8& chi, 
+			      int length, const multi1d<int>& path,
+			      const Subset& sub)
+  {
+    return displace<LatticeColorVector8,LatticeColorMatrix8>(u, chi, length, path, sub);
+  }
+
+
 
   //! Apply a right derivative path to a lattice field
   /*! \ingroup smear */
@@ -271,7 +341,7 @@ namespace Chroma
                 const multi1d<LatticeColorMatrix>& u,
                 int mu, int length)
   {
-    return displace<T>(u, F, length, mu, QDP::all) - displace<T>(u, F, -length, mu, QDP::all);
+    return displace<T,LatticeColorMatrix>(u, F, length, mu, QDP::all) - displace<T,LatticeColorMatrix>(u, F, -length, mu, QDP::all);
   }
 
 
@@ -372,7 +442,7 @@ namespace Chroma
     Real angle = twopi*mom / Real(Layout::lattSize()[mu]);
     Complex phase = cmplx(cos(angle),sin(angle));
 
-    return (Real(1) + conj(phase))*displace<T>(u, F, -length, mu, QDP::all) - (Real(1) + phase)*displace<T>(u, F, length, mu, QDP::all);
+    return (Real(1) + conj(phase))*displace<T,LatticeColorMatrix>(u, F, -length, mu, QDP::all) - (Real(1) + phase)*displace<T,LatticeColorMatrix>(u, F, length, mu, QDP::all);
   }
 
 
